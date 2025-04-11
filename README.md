@@ -210,3 +210,19 @@ PING 10.40.0.10 (10.40.0.10) 56(84) bytes of data.
 
 9. 设置路由规则，使其能够跨主机通信
 
+添加一条`POSTROUTING`规则，将所有从容器发出的数据包，都通过物理网卡`ens3`(具体看主机的网卡)发出：
+
+```
+iptables -t nat -A POSTROUTING -s 10.40.0.0/24 -o ens3 -j MASQUERADE
+```
+
+追加`FORWARD`规则，允许通过`br0`转发`ens3`：
+```
+iptables -A FORWARD -i br0 -o ens3 -j ACCEPT
+```
+
+再追加一条`FORWARD`规则，通过`ens3`转发到`br0`：
+
+```
+ipatables -A FORWARD -i ens3 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+```
