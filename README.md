@@ -168,3 +168,45 @@ PING 10.40.0.12 (10.40.0.12) 56(84) bytes of data.
 64 bytes from 10.40.0.12: icmp_seq=5 ttl=64 time=0.108 ms
 64 bytes from 10.40.0.12: icmp_seq=6 ttl=64 time=0.107 ms
 ```
+
+当时ping本容器网络的IP时，则出现ping不通：
+
+```shell
+root@localhost:~/k3s# ip netns exec test.0 ping 10.40.0.10
+PING 10.40.0.10 (10.40.0.10) 56(84) bytes of data.
+
+```
+
+原因是lo网络设备没开启：
+```
+root@localhost:~/k3s# ip netns exec test.0 ip addr
+1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+22: veth1@if23: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether b2:f4:f2:2d:1d:63 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.40.0.10/24 scope global veth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b0f4:f2ff:fe2d:1d63/64 scope link 
+       valid_lft forever preferred_lft forever
+```
+
+开启lo设备：
+
+```
+ip netns exec test.0 ip link set lo up
+```
+
+这时候ping就正常了
+
+```shell
+root@localhost:~/k3s# ip netns exec test.0 ping 10.40.0.10
+PING 10.40.0.10 (10.40.0.10) 56(84) bytes of data.
+64 bytes from 10.40.0.10: icmp_seq=1 ttl=64 time=0.017 ms
+64 bytes from 10.40.0.10: icmp_seq=2 ttl=64 time=0.054 ms
+64 bytes from 10.40.0.10: icmp_seq=3 ttl=64 time=0.031 ms
+64 bytes from 10.40.0.10: icmp_seq=4 ttl=64 time=0.053 ms
+64 bytes from 10.40.0.10: icmp_seq=5 ttl=64 time=0.021 ms
+```
+
+9. 设置路由规则，使其能够跨主机通信
+
