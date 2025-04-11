@@ -100,7 +100,7 @@ root@localhost:~/k3s# ip netns exec test.0 ip addr
 
 如果要实现不同容器的通信，需要配置路由。
 
-为了测试可以按照上面方法创建容器网络空间`test.1`，以及对应的veth pair（`veth2`，`veth3`），并配置IP地址 10.40.0.12/24。
+为了测试可以按照上面方法创建容器网络空间`test.1`，以及对应的veth pair（`veth2`，`veth3`），并配置IP地址 `10.40.0.12/24`。
 
 然后配置路由：
 
