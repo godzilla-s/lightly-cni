@@ -28,12 +28,6 @@ CNI（Container Network Interface）是一个用于容器网络管理的接口�
 
 ![flannel](./images/k8s-cni-conf.png)
 
-1. Pod内部的容器通信
-
-2. 同一节点上Pod间通信
-
-3. 不同节点上Pod间通信
-
 
 + **插件发现**：当容器启动时，容器运行时首先会查找并加载CNI配置文件，这些文件通常位于`/etc/cni/net.d/`目录下。
 + **执行插件**：根据CNI配置文件中指定的网络类型，容器运行时将调用相应的CNI插件二进制程序。
@@ -42,3 +36,15 @@ CNI（Container Network Interface）是一个用于容器网络管理的接口�
 + **清理资源**：当容器停止或删除时，CNI插件会执行相应的清理操作，如释放IP地址、删除路由规则等。
 
 
+1. Pod内部的容器通信
+
+pause容器：
+
+
+netns: 
+
+2. 同一节点上Pod间通信
+
+3. 不同节点上Pod间通信
+
+4. Pod与Service通信
