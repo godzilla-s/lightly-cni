@@ -49,6 +49,10 @@ func (i *IPAM) NextIP(ip net.IP) (net.IP, error) {
 	return nextIP, nil
 }
 
+func (i *IPAM) IPNet(ip net.IP) *net.IPNet {
+	return &net.IPNet{IP: ip, Mask: i.Mask()}
+}
+
 // 这里的id为容器的id
 func (i *IPAM) Allocate(id, ifname string) (net.IP, error) {
 	i.store.Lock()
