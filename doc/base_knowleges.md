@@ -1,5 +1,5 @@
 
-### 网关
+## 网关（gateway）
 
 **概念：** 
 
@@ -34,11 +34,17 @@ ip route del default
 ip route add default via <gateway_ip> dev <interface>
 ```
 
-## 桥(bridge)
+## 网桥(bridge)
 
 桥是一种网络设备，用于连接两个网络，使它们能够互相通信，同时，桥还能将数据在网段之间传递。桥接可以实现MAC地址绑定，将同一个子网的不同计算机之间的通信放到网卡层处理，减轻网络的负担。
 
+网桥的创建:
+```shell
+ip link add name <bridge_name> type bridge
 
+# 查看
+ip link show type bridge
+```
 
 ### promisc模式（混杂模式）
 
