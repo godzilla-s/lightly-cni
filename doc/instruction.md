@@ -38,6 +38,10 @@ CNI的发展历程反映了容器网络技术的演进：
 
 ### Pod内部网络
 
+kubernetes是由一个个Pod组成的服务编排系统，每个Pod相互独立，如何保证Pod的独立性： 
+
+linux namespace -> net namespace
+
 + Pod是如何创建网络
 + Pod内部网络的特点
 

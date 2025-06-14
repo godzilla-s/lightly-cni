@@ -46,6 +46,19 @@ ip link add name <bridge_name> type bridge
 ip link show type bridge
 ```
 
+## 路由
+
+查看路由信息
+
+```shell
+ip route show
+```
+或者
+```shell
+route -n
+```
+
+
 ### promisc模式（混杂模式）
 
 混杂模式(Promiscuous  mode)，简称 Promisc  mode，俗称监听模式。
