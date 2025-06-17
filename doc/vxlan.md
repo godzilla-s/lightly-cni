@@ -8,6 +8,8 @@ VXLAN（Virtual eXtensible Local Area Network，虚拟扩展局域网），是�
 
 在介绍VXLAN隧道的建立过程前，先来了解VXLAN网络模型中一些常见的概念。如下图所示，两台服务器之间通过VXLAN网络进行通信。在两台TOR交换机之间建立了一条VXLAN隧道，TOR交换机将服务器发出的原始数据帧加以“包装”，好让原始报文可以在承载网络（比如IP网络）上传输。当到达目的服务器所连接的TOR交换机后，离开VXLAN隧道，并将原始数据帧恢复出来，继续转发给目的服务器。
 
+![vxlan](./images/vxlan.png)
+
 ## VxLAN与VLAN有什么不同
 
 VLAN作为传统的网络隔离技术，在标准定义中VLAN的数量只有4000个左右，无法满足大二层网络的租户间隔离需求。另外，VLAN的二层范围一般较小且固定，无法支持虚拟机大范围的动态迁移。
@@ -18,7 +20,7 @@ VXLAN完美地弥补了VLAN的上述不足，一方面通过VXLAN中的24比特V
 
 VxLAN的报文结构：
 
-[报文结构](./images/vxlan-package-data.png)
+![报文结构](./images/vxlan-package-data.png)
 
 如上图所示，VTEP对VM发送的原始以太帧（Original L2 Frame）进行了以下“包装”：
 
@@ -50,5 +52,44 @@ VNI还可分为二层VNI和三层VNI，它们的作用不同，二层VNI是普�
 
 ## VxLAN 隧道建立
 
+创建VxLAN设备
 
+```
+ip link add vxlan01 type vxlan id 100 dstport 4789 remote 10.10.18.160 local 10.10.18.158 dev enp1s0
+```
+
+**参数解释:**
+
++ id: 指定VNI值，有效值在`1 ~ 2^24`之间
++ dstport: VTEP通信端口， IANA分配的端口是4789，如果不指定， Linux默认使用`8472`，ovs创建vxlan port默认使用 4789
++ remote: 对端VTEP的地址，一般使用物理机上的网卡最为VTEP指定的IP地址
++ local: 当前节点VTEP使用的地址，一般为当前物理机上的网卡IP地址
++ dev: 当前节点用于VTEP通信的设备，一般指定为本机的网卡，用来获取VTEP IP地址。这个参数与local参数目的相同，二选一即可。
+
+创建完成后可以通过下面命令查看:
+
+```shell
+ip link show type vxlan
+```
+输出:
+```shell
+localhost@localhost:~$ ip link show type vxlan
+6: vxlan01: <BROADCAST,MULTICAST> mtu 1450 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 42:03:15:46:68:d2 brd ff:ff:ff:ff:ff:ff
+```
+
+同时vxlan创建完成后，会增加一条bridge FDB转发表:
+```
+bridge fdb
+```
+输出:
+```shell
+00:00:00:00:00:00 dev vxlan01 dst 10.10.18.160 via enp1s0 self permanent
+```
+
+**注意:** 
+
++ 在使用VxLAN时，最好把主机的防火墙关闭。
+
+## 实战： 手动创建VxLAN实现点对点虚拟网络通信
 
