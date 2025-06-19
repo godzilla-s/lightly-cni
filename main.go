@@ -52,6 +52,7 @@ func cmdAdd(args *skel.CmdArgs) error {
 		return err
 	}
 
+	// 创建网桥，虚拟设备，并绑定到网桥
 	mtu := 1500
 	br, err := bridge.Create(conf.Bridge, mtu, ipam.IPNet(gateway))
 	if err != nil {

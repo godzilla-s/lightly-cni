@@ -2,13 +2,17 @@
 
 ## 概念
 
-VXLAN（Virtual eXtensible Local Area Network，虚拟扩展局域网），是由IETF定义的NVO3（Network Virtualization over Layer 3）标准技术之一，是对传统VLAN协议的一种扩展。通过将虚拟机发出的数据包封装在UDP中，并使用物理网络的IP、MAC作为outer-header进行封装，然后在IP网络上传输，到达目的地后由隧道终结点解封装并将数据发送给目标虚拟机。VXLAN的特点是将L2的以太帧封装到UDP报文（即L2 over L4）中，并在L3网络中传输。
+VXLAN（Virtual eXtensible Local Area Network，虚拟扩展局域网），是由IETF定义的NVO3（Network Virtualization over Layer 3）标准技术之一，是对传统VLAN协议的一种扩展。通过将虚拟机发出的数据包封装在UDP中，并使用物理网络的IP、MAC作为outer-header进行封装，然后在IP网络上传输，到达目的地后由隧道终结点解封装并将数据发送给目标虚拟机。VXLAN的特点是将L2的以太帧封装到UDP报文（即L2 over L3， 或者Mac in UDP）中，并在L3网络中传输。
 
 ## VxLAN 工作原理
 
 在介绍VXLAN隧道的建立过程前，先来了解VXLAN网络模型中一些常见的概念。如下图所示，两台服务器之间通过VXLAN网络进行通信。在两台TOR交换机之间建立了一条VXLAN隧道，TOR交换机将服务器发出的原始数据帧加以“包装”，好让原始报文可以在承载网络（比如IP网络）上传输。当到达目的服务器所连接的TOR交换机后，离开VXLAN隧道，并将原始数据帧恢复出来，继续转发给目的服务器。
 
 ![vxlan](./images/vxlan.png)
+
+优点是什么？ 
+
+缺点是什么？
 
 ## VxLAN与VLAN有什么不同
 

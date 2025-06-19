@@ -4,8 +4,6 @@ cmd_add() {
     if [ "${IS_DEFAULT_GATEWAY}" == "true" ]; then
         IS_GATEWAY="true"
     fi 
-
-
 }
 
 # 建立并设置网桥
