@@ -20,16 +20,12 @@ CNI的发展历程反映了容器网络技术的演进：
 
 + 与CNM的竞争​​：Docker提出了自己的网络模型CNM(Container Network Model)，但CNM设计更为复杂且专为Docker定制，难以支持其他容器运行时。相比之下，CNI更加轻量和通用，最终被Kubernetes采纳为标准。
 
-+ ​Kubernetes的采用​​：随着Kubernetes的崛起，CNI因其简单性和灵活性成为Kubernetes事实上的网络标准。Kubernetes通过CNI接口将网络功能外包给专门的网络插件。
++ ​Kubernetes的采用​​：随着Kubernetes的崛起（k8s从1.5版本开始集成CNI），CNI因其简单性和灵活性成为Kubernetes事实上的网络标准。Kubernetes通过CNI接口将网络功能外包给专门的网络插件。
 
 + ​​持续演进​​：CNI规范经过多次迭代，从最初的简单功能发展到支持更复杂的网络场景，如网络策略、服务发现等。
 
 + ​​生态系统繁荣​​：随着CNI被广泛接受，出现了大量CNI插件实现，如Calico、Flannel、Weave、Cilium等，每种插件针对不同的使用场景进行了优化
 
-
-### CNI的运行机制
-
-CNI 最主要作用是处理Pod的网络配置问题
 
 ## 技术原理
 
@@ -39,6 +35,10 @@ CNI 最主要作用是处理Pod的网络配置问题
 + kubernetes网络模型
 + 基础概念（AI整理报告）
 + TCP/IP 数据包封装过程（了解）
+
+### CNI的运行机制
+
+CNI 最主要作用是处理Pod的网络配置问题
 
 ### k8s 网络模型
 
@@ -92,6 +92,8 @@ veth1 通过网桥 cni0 与其他 pod 相连虚拟以太接口 vethX 相连，�
 + IPIP
 + Geneve
 
+### Pod to Service
+
 ## 开发与部署
 
 ### CNI介绍
@@ -128,7 +130,10 @@ var l *log.Logger
 }
 ```
 
-配置文件一般放在 `/etc/cni/net.d` 目录下，文件名类似 `10-mynet.conf`
+配置文件一般放在 `/etc/cni/net.d` 目录下，文件名类似 `10-mynet.conf`，也可以通过kubelet参数指定
+```
+kubelet --network-plugin=cni --cni-conf-dir=/etc/cni/net.d --cni-bin-dir=/opt/cni/bin
+```
 
 返回参数:
 ```json
