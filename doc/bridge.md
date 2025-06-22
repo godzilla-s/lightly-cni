@@ -179,3 +179,9 @@ ip netns exec <netns> curl <目标IP>:<端口号>
 
 ip netns exec <netns> ip addr
 ```
+
+查看某个网桥下已加入的虚拟网卡设备：
+
+```
+brctl show <网桥名>
+```
