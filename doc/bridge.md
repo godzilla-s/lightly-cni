@@ -83,11 +83,28 @@ root@m5-stag-svr6:~$ route -n
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         172.16.5.254    0.0.0.0         UG    100    0        0 ens3
-10.0.0.0        172.16.5.84     255.255.255.0   UG    0      0        0 ens3
-10.0.1.0        172.16.5.85     255.255.255.0   UG    0      0        0 virbr0
-172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+10.0.1.0        172.16.5.84     255.255.255.0   UG    0      0        0 ens3
+10.0.2.0        172.16.5.85     255.255.255.0   UG    0      0        0 ens3
+10.0.3.0        172.16.5.86     255.255.255.0   UG    0      0        0 ens3
+10.0.4.0        10.0.4.47       255.255.255.0   UG    0      0        0 cilium_host
+10.0.4.47       0.0.0.0         255.255.255.255 UH    0      0        0 cilium_host
+172.16.5.0      0.0.0.0         255.255.0.0     U     0      0        0 ens3
 192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
 ```
+
++ Destination：目的地网络地址；                       
++ Gateway：下一跳地址，即数据包应该发送到的下一个路由器或直接相连的设备的IP地址；
++ Flags：总共有多个旗标，代表的意义如下：                        
+    + U (route is up)：该路由是启动的；                       
+    + H (target is a host)：目标是一部主机 (IP) 而非网域；                       
+    + G (use gateway)：需要透过外部的主机 (gateway) 来转递封包；                       
+    + R (reinstate route for dynamic routing)：使用动态路由时，恢复路由资讯的旗标；                       
+    + D (dynamically installed by daemon or redirect)：已经由服务或转 port 功能设定为动态路由                       
+    + M (modified from routing daemon or redirect)：路由已经被修改了；              
+    + ! (reject route)：这个路由将不会被接受(用来抵挡不安全的网域！)
+    + A (installed by addrconf)
+    + C (cache entry)
+
 
 **路由表的查询与匹配**
 
@@ -103,7 +120,19 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
     + 如果没有匹配到条目，且存在默认路由（0.0.0.0/0）,数据包发往默认网关，否则，丢弃数据包并返回“不可达”消息
 
 下面通过一个例子说明：
++ 数据包目标IP为192.168.1.100：
+    + 匹配到 192.168.1.0/24，则直连，通过eth0发送
++ 数据包目标IP为 141.141.141.141：
+    + 没有匹配到，但是有默认路由 0.0.0.0, 发送到
 
+### 路由表的来源
+
+路由表中的条目可以通过以下方式生成：
+
++ 直连路由： 直接链接的网络自动加到路由表，子网掩码由接口配置决定
++ 静态路由：管理员手动配置，适用于小型或固定拓扑网络
++ 动态路由：通过路由协议（如RIP、OSPF、BGP）学习其他路由器共享的路由信息，适合大型或动态变化的网络
++ 默认路由： 当目标地址不匹配任何具体的条目使用的路由时，通常指向互联网网关
 
 查看路由信息
 
@@ -128,19 +157,6 @@ ip route get <pod ip>
     cache
 ```
 
-
-
-Flags：总共有多个旗标，代表的意义如下：                        
-
-+ U (route is up)：该路由是启动的；                       
-+ H (target is a host)：目标是一部主机 (IP) 而非网域；                       
-+ G (use gateway)：需要透过外部的主机 (gateway) 来转递封包；                       
-+ R (reinstate route for dynamic routing)：使用动态路由时，恢复路由资讯的旗标；                       
-+ D (dynamically installed by daemon or redirect)：已经由服务或转 port 功能设定为动态路由                       
-+ M (modified from routing daemon or redirect)：路由已经被修改了；              
-+ ! (reject route)：这个路由将不会被接受(用来抵挡不安全的网域！)
-+ A (installed by addrconf)
-+ C (cache entry)
 
 ### promisc模式（混杂模式）
 
