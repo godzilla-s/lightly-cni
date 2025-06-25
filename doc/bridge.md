@@ -76,6 +76,8 @@ ip link show type bridge
 
 路由表由多条路由条目组成
 
+查看路由信息可以通过`ip route`和`route -n`命令查看
+
 比如下面某个机器上路由信息：
 路由表信息:
 ```shell
@@ -134,29 +136,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 + 动态路由：通过路由协议（如RIP、OSPF、BGP）学习其他路由器共享的路由信息，适合大型或动态变化的网络
 + 默认路由： 当目标地址不匹配任何具体的条目使用的路由时，通常指向互联网网关
 
-查看路由信息
-
-```shell
-ip route show
-```
-或者
-```shell
-route -n
-```
-
-路由决策模拟（测试数据包如何路由到目标 IP）： 
-
-```shell
-ip route get <pod ip>
-```
-
-比如:
-```shell
-[root@localhost]# ip route get 10.0.2.223
-10.0.2.223 vis 172.16.5.86 dev ens3 src 172.16.5.83 uid 0
-    cache
-```
-
 
 ### promisc模式（混杂模式）
 
@@ -201,3 +180,11 @@ ip netns exec <netns> ip addr
 ```
 brctl show <网桥名>
 ```
+
+## 常见问题
+
+1. ARP表和FDB表的区别
+
+两个最大的区别在于ARP是三层转发，FDB是用于二层转发。也就是说，就算两个设备不在一个网段或者压根没配IP，只要两者之间的链路层是连通的，就可以通过FDB表进行数据的转发！
+
+FDB表的最主要的作用就是在于交换机二层选路，试想，如果仅仅有ARP表，没有FDB表，就好像只知道地名和方位，而不知道经过哪条路才能到达目的地，设备是无法正常工作的。FDB表的作用就在于告诉设备从某个端口出去就可以到某个目的MAC。

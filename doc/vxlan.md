@@ -58,7 +58,7 @@ VNI还可分为二层VNI和三层VNI，它们的作用不同，二层VNI是普�
 
 创建VxLAN设备
 
-```
+```shell
 ip link add vxlan01 type vxlan id 100 dstport 4789 remote 10.10.18.160 local 10.10.18.158 dev enp1s0
 ```
 
@@ -72,14 +72,17 @@ ip link add vxlan01 type vxlan id 100 dstport 4789 remote 10.10.18.160 local 10.
 
 创建完成后可以通过下面命令查看:
 
-```shell
-ip link show type vxlan
-```
 输出:
 ```shell
 localhost@localhost:~$ ip link show type vxlan
 6: vxlan01: <BROADCAST,MULTICAST> mtu 1450 qdisc noop state DOWN mode DEFAULT group default qlen 1000
     link/ether 42:03:15:46:68:d2 brd ff:ff:ff:ff:ff:ff
+
+# 或者通过下面命令查看详细一点的信息
+localhost@localhost:~$ ip -d link show type vxlan
+6: vxlan01: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/ether 42:03:15:46:68:d2 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 65535 
+    vxlan id 100 remote 10.10.18.160 dev enp1s0 srcport 0 0 dstport 4789 ttl auto ageing 300 udpcsum noudp6zerocsumtx noudp6zerocsumrx addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 64000 gso_max_segs 64
 ```
 
 同时vxlan创建完成后，会增加一条bridge FDB转发表:
